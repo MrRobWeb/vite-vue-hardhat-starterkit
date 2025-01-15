@@ -9,6 +9,7 @@ contract Lock {
     address payable public owner;
 
     event Withdrawal(uint amount, uint when);
+    event Deposit(address indexed from, uint amount, uint when);
 
     constructor(uint _unlockTime) payable {
         require(
@@ -30,5 +31,11 @@ contract Lock {
         emit Withdrawal(address(this).balance, block.timestamp);
 
         owner.transfer(address(this).balance);
+    }
+
+    function deposit() public payable {
+        require(msg.value > 0, "Deposit amount must be greater than zero");
+
+        emit Deposit(msg.sender, msg.value, block.timestamp);
     }
 }

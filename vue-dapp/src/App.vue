@@ -3,7 +3,7 @@ import { ref, onActivated, onUpdated, onUnmounted, onMounted, onBeforeMount, wat
 import { toast } from "vue3-toastify";
 
 import HelloWorld from './components/HelloWorld.vue'
-import { requestAccount, depositFund, withdrawFund } from "./utils/contractService";
+import { requestAccount, depositFund, withdrawFund, getContractBalanceInETH } from "./utils/contractService";
 
 
 // const props = defineProps({
@@ -17,7 +17,7 @@ import { requestAccount, depositFund, withdrawFund } from "./utils/contractServi
 //   }
 // });
 
-const balance = ref(null);
+const balance = ref("");
 const account = ref({});
 const depositValue = ref();
 
@@ -25,6 +25,13 @@ watch(account,  async(account, prevAccount) => {
   
   account = await requestAccount();
   console.info('Set account: ', account, '| Previous account: ', prevAccount)
+
+});
+
+watch(balance,  async(balance, prevBalance) => {
+  
+  balance = await getContractBalanceInETH();
+  console.info('Set balance: ', balance, '| Previous balance: ', prevBalance)
 
 });
 
@@ -79,15 +86,7 @@ const connectWallet = async () => {
       </div>
     </div>
   </div>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  
 </template>
 
 <style scoped>

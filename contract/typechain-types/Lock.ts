@@ -9,6 +9,7 @@ import type {
   Result,
   Interface,
   EventFragment,
+  AddressLike,
   ContractRunner,
   ContractMethod,
   Listener,
@@ -24,11 +25,12 @@ import type {
 
 export interface LockInterface extends Interface {
   getFunction(
-    nameOrSignature: "owner" | "unlockTime" | "withdraw"
+    nameOrSignature: "deposit" | "owner" | "unlockTime" | "withdraw"
   ): FunctionFragment;
 
-  getEvent(nameOrSignatureOrTopic: "Withdrawal"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Deposit" | "Withdrawal"): EventFragment;
 
+  encodeFunctionData(functionFragment: "deposit", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "unlockTime",
@@ -36,9 +38,28 @@ export interface LockInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
 
+  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "unlockTime", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+}
+
+export namespace DepositEvent {
+  export type InputTuple = [
+    from: AddressLike,
+    amount: BigNumberish,
+    when: BigNumberish
+  ];
+  export type OutputTuple = [from: string, amount: bigint, when: bigint];
+  export interface OutputObject {
+    from: string;
+    amount: bigint;
+    when: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace WithdrawalEvent {
@@ -97,6 +118,8 @@ export interface Lock extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  deposit: TypedContractMethod<[], [void], "payable">;
+
   owner: TypedContractMethod<[], [string], "view">;
 
   unlockTime: TypedContractMethod<[], [bigint], "view">;
@@ -108,6 +131,9 @@ export interface Lock extends BaseContract {
   ): T;
 
   getFunction(
+    nameOrSignature: "deposit"
+  ): TypedContractMethod<[], [void], "payable">;
+  getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -118,6 +144,13 @@ export interface Lock extends BaseContract {
   ): TypedContractMethod<[], [void], "nonpayable">;
 
   getEvent(
+    key: "Deposit"
+  ): TypedContractEvent<
+    DepositEvent.InputTuple,
+    DepositEvent.OutputTuple,
+    DepositEvent.OutputObject
+  >;
+  getEvent(
     key: "Withdrawal"
   ): TypedContractEvent<
     WithdrawalEvent.InputTuple,
@@ -126,6 +159,17 @@ export interface Lock extends BaseContract {
   >;
 
   filters: {
+    "Deposit(address,uint256,uint256)": TypedContractEvent<
+      DepositEvent.InputTuple,
+      DepositEvent.OutputTuple,
+      DepositEvent.OutputObject
+    >;
+    Deposit: TypedContractEvent<
+      DepositEvent.InputTuple,
+      DepositEvent.OutputTuple,
+      DepositEvent.OutputObject
+    >;
+
     "Withdrawal(uint256,uint256)": TypedContractEvent<
       WithdrawalEvent.InputTuple,
       WithdrawalEvent.OutputTuple,
