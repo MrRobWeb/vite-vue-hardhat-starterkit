@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, onActivated, onUpdated, onUnmounted, onMounted, onBeforeMount, watch } from 'vue'
+import { toast } from "vue3-toastify";
+
 import HelloWorld from './components/HelloWorld.vue'
-import { requestAccount } from "./utils/contractService";
+import { requestAccount, depositFund, withdrawFund } from "./utils/contractService";
+
 
 // const props = defineProps({
 //   balance: {
@@ -16,6 +19,7 @@ import { requestAccount } from "./utils/contractService";
 
 const balance = ref(null);
 const account = ref({});
+const depositValue = ref();
 
 watch(account,  async(account, prevAccount) => {
   
@@ -32,6 +36,23 @@ const connectWallet = async () => {
       console.error("Failed to connect wallet:", error);
     }
   };
+
+  const handleDeposit = async () => {
+    try {
+      await depositFund(depositValue.value);
+    } catch (error) {
+      toast.error(error);
+    }
+    depositValue.value = "";
+  };
+
+  const handleWithdraw = async () => {
+    try {
+      await withdrawFund();
+    } catch (error) {
+      toast.error(error);
+    }
+  };
 </script>
 
 <template>
@@ -41,6 +62,21 @@ const connectWallet = async () => {
       
       <h2>Contract Balance: {{ balance }} ETH</h2>
       <p>Connected Account: {{ account }}</p>
+    </div>
+    <div>
+      <h2>Contract Actions</h2>
+      <div>
+        <input
+          type="text"
+          v-model="depositValue"
+          placeholder="Amount in ETH"
+        />
+        <button @click="handleDeposit">Deposit Funds</button>
+      </div>
+      <br />
+      <div>
+        <button @click="handleWithdraw">Withdraw Funds</button>
+      </div>
     </div>
   </div>
   <div>

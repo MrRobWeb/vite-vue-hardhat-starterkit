@@ -12,7 +12,7 @@ const initialize = async () => {
   if (typeof window.ethereum !== "undefined") {
     provider = new BrowserProvider(window.ethereum);
     signer = await provider.getSigner();
-    // contract = new Contract(CONTRACT_ADDRESS, Lock_ABI.abi, signer);
+    contract = new Contract(CONTRACT_ADDRESS, Lock_ABI.abi, signer);
   } else {
     console.error("Please install MetaMask!");
   }
@@ -42,16 +42,16 @@ export const getContractBalanceInETH = async () => {
   return balanceEth; // Convert ETH string to number
 };
 
-// // Function to deposit funds to the contract
-// export const depositFund = async (depositValue: string) => {
-//   const ethValue = parseEther(depositValue);
-//   const deposit = await contract.deposit({ value: ethValue });
-//   await deposit.wait();
-// };
+// Function to deposit funds to the contract
+export const depositFund = async (depositValue: string) => {
+  const ethValue = parseEther(depositValue);
+  const deposit = await contract.deposit({ value: ethValue });
+  await deposit.wait();
+};
 
-// // Function to withdraw funds from the contract
-// export const withdrawFund = async () => {
-//   const withdrawTx = await contract.withdraw();
-//   await withdrawTx.wait();
-//   console.log("Withdrawal successful!");
-// };
+// Function to withdraw funds from the contract
+export const withdrawFund = async () => {
+  const withdrawTx = await contract.withdraw();
+  await withdrawTx.wait();
+  console.log("Withdrawal successful!");
+};
