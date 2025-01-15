@@ -1,8 +1,48 @@
 <script setup lang="ts">
+import { ref, onActivated, onUpdated, onUnmounted, onMounted, onBeforeMount, watch } from 'vue'
 import HelloWorld from './components/HelloWorld.vue'
+import { requestAccount } from "./utils/contractService";
+
+// const props = defineProps({
+//   balance: {
+//     type: String,
+//     default: '0'
+//   },
+//   account: {
+//     type: Object,
+//     default: {}
+//   }
+// });
+
+const balance = ref(null);
+const account = ref({});
+
+watch(account,  async(account, prevAccount) => {
+  
+  account = await requestAccount();
+  console.info('Set account: ', account, '| Previous account: ', prevAccount)
+
+});
+
+const connectWallet = async () => {
+  console.log('click')
+    try {
+      account.value = await requestAccount();
+    } catch (error) {
+      console.error("Failed to connect wallet:", error);
+    }
+  };
 </script>
 
 <template>
+  <button @click="connectWallet">Connect Web3 Wallet</button>
+  <div>
+    <div>
+      
+      <h2>Contract Balance: {{ balance }} ETH</h2>
+      <p>Connected Account: {{ account }}</p>
+    </div>
+  </div>
   <div>
     <a href="https://vite.dev" target="_blank">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
