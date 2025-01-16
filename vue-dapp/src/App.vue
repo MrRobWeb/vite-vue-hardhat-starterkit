@@ -17,8 +17,8 @@ import { requestAccount, depositFund, withdrawFund, getContractBalanceInETH } fr
 //   }
 // });
 
-const balance = ref("");
-const account = ref({});
+const balance = ref("0");
+const account = ref();
 const depositValue = ref();
 
 watch(account,  async(account, prevAccount) => {
@@ -63,8 +63,8 @@ const connectWallet = async () => {
 </script>
 
 <template>
-  <button @click="connectWallet">Connect Web3 Wallet</button>
-  <div>
+  <button v-if="!account" @click="connectWallet">Connect Web3 Wallet</button>
+  <div v-else>
     <div>
       
       <h2>Contract Balance: {{ balance }} ETH</h2>

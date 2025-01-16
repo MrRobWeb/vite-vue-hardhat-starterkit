@@ -25,6 +25,7 @@ initialize();
 export const requestAccount = async () => {
   try {
     const accounts = await provider.send("eth_requestAccounts", []);
+    console.log(accounts)
     return accounts[0]; // Return the first account
   } catch (error) {
     let errorMessage = "Failed to request Account";

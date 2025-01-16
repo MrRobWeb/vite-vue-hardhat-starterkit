@@ -1,8 +1,8 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/home/webnuke/Desktop/Projects/vite-vue-hardhat-starterkit/contract/contracts/Lock.sol": {
-      "lastModificationDate": 1736956892371,
+    "/home/webnuke/Desktop/Projects/vite-vue-hardhat-starterkit/hardhat-contract/contracts/Lock.sol": {
+      "lastModificationDate": 1737006391035,
       "contentHash": "35474d95826e4e5f394004a480493470",
       "sourceName": "contracts/Lock.sol",
       "solcConfig": {
