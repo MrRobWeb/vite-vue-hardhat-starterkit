@@ -2,43 +2,19 @@
 import { ref, onActivated, onUpdated, onUnmounted, onMounted, onBeforeMount, watch } from 'vue'
 import { toast } from "vue3-toastify";
 
-import HelloWorld from './components/HelloWorld.vue'
+// import HelloWorld from './components/HelloWorld.vue'
 import { requestAccount, depositFund, withdrawFund, getContractBalanceInETH } from "./utils/contractService";
 
-
-// const props = defineProps({
-//   balance: {
-//     type: String,
-//     default: '0'
-//   },
-//   account: {
-//     type: Object,
-//     default: {}
-//   }
-// });
 
 const balance = ref("0");
 const account = ref();
 const depositValue = ref();
 
-watch(account,  async(account, prevAccount) => {
-  
-  account = await requestAccount();
-  console.info('Set account: ', account, '| Previous account: ', prevAccount)
-
-});
-
-watch(balance,  async(balance, prevBalance) => {
-  
-  balance = await getContractBalanceInETH();
-  console.info('Set balance: ', balance, '| Previous balance: ', prevBalance)
-
-});
-
 const connectWallet = async () => {
-  console.log('click')
+  
     try {
       account.value = await requestAccount();
+      balance.value = await getContractBalanceInETH();
     } catch (error) {
       console.error("Failed to connect wallet:", error);
     }
@@ -47,6 +23,7 @@ const connectWallet = async () => {
   const handleDeposit = async () => {
     try {
       await depositFund(depositValue.value);
+      balance.value = await getContractBalanceInETH();
     } catch (error) {
       toast.error(error);
     }
@@ -63,6 +40,7 @@ const connectWallet = async () => {
 </script>
 
 <template>
+  <h1>Vite+Vue+Hardhat+Ethers</h1>
   <button v-if="!account" @click="connectWallet">Connect Web3 Wallet</button>
   <div v-else>
     <div>
